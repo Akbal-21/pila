@@ -41,12 +41,23 @@ def handle_error ():
     mss = 'Opcion invalida\n'
     return mss
 
+def transListas (arch,cad):
+    for i in cad:
+        arch.append(f'{i}')
+    return arch
+
+
 def start (cad):
+    archivo = open('cadena.txt', 'w')
     cero = cad.count('0')
     uno = cad.count('1')
+    arch = []
     if cero >= uno:
         if cad.index('0') == 0:
             pila = Stack()
+            arch = transListas(arch, cad)
+            arch1 = arch.copy()
+            archivo.write(f'(q, {arch}, {pila}Z0)+')
             for i in cad:
                 if cad.index(i) == 0:
                     pila.Add('X')
@@ -56,8 +67,19 @@ def start (cad):
                         exit()
                     else:
                         pila.Remove()
-
+                del arch[0]
+                if len(arch) == 0:
+                    if len(pila) == 0:
+                        archivo.write(f'(q, e, Z0)+(f, e, Z0)\n')
+                    else:
+                        archivo.write(f'(q, e, {pila}Z0)+(f, e, {pila}Z0)\n')
+                else:
+                    archivo.write(f'(q, {arch}, {pila}Z0)+')
                 print(pila)
+            if len(pila) == 0:
+                archivo.write(f'(q, {arch1}, Z0)+*(f, e, Z0) ')
+            else:
+                archivo.write(f'(q, {arch1}, Z0)+*(f, e,{pila} Z0) ')
             exit()
         else:
             print('La cadena no inicia con 0')
